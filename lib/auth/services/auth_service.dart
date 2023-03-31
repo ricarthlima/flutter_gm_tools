@@ -6,8 +6,14 @@ class AuthService {
   Future<String?> entrarUsuario(
       {required String email, required String senha}) async {
     try {
-      await _firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: senha);
+      UserCredential userCredential = await _firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: senha);
+
+      if (!userCredential.user!.emailVerified) {
+        userCredential.user!.sendEmailVerification();
+        _firebaseAuth.signOut();
+        return "E-mail não verificado. Verifique sua caixa de entrada.";
+      }
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "user-not-found":
@@ -34,6 +40,8 @@ class AuthService {
       );
 
       await userCredential.user!.updateDisplayName(nome);
+
+      await userCredential.user!.sendEmailVerification();
       //print("Funcionou! Chegamos até essa linha!");
     } on FirebaseAuthException catch (e) {
       switch (e.code) {

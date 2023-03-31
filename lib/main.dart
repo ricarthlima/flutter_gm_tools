@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: MyColors.darkfgreen,
-        scaffoldBackgroundColor: MyColors.darkgrey,
+        scaffoldBackgroundColor: MyColors.white,
         textTheme: GoogleFonts.oxygenTextTheme(),
       ),
       home: const RoteadorTelas(),
@@ -46,7 +46,7 @@ class RoteadorTelas extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else {
-          if (snapshot.hasData) {
+          if (snapshot.hasData && snapshot.data!.emailVerified) {
             return HomeScreen(
               user: snapshot.data!,
             );

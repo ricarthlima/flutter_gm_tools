@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_gm_tools/_core/colors.dart';
 import 'package:flutter_gm_tools/auth/services/auth_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -26,88 +29,169 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 32),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              color: Colors.white,
-            ),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    "GM Tools",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 42,
-                      fontFamily: GoogleFonts.changaOne().fontFamily,
-                    ),
+      body: Stack(
+        children: [
+          Container(
+            alignment: Alignment.bottomRight,
+            child: Image.asset("assets/cleric.png"),
+          ),
+          Container(
+            margin: const EdgeInsets.only(right: 16, bottom: 8),
+            alignment: Alignment.bottomRight,
+            child: Text(
+              "Zeri Ukuthula - Clériga de Eldath",
+              style: TextStyle(
+                fontSize: 16,
+                color: MyColors.darkfgreen,
+                fontWeight: FontWeight.w700,
+                shadows: [
+                  Shadow(
+                    color: MyColors.white.withAlpha(100),
+                    offset: const Offset(1, 1),
+                    blurRadius: 6,
                   ),
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(label: Text("E-mail")),
+                  Shadow(
+                    color: MyColors.white.withAlpha(100),
+                    offset: const Offset(-1, -1),
+                    blurRadius: 6,
                   ),
-                  TextFormField(
-                    controller: _senhaController,
-                    decoration: const InputDecoration(label: Text("Senha")),
+                  Shadow(
+                    color: MyColors.white.withAlpha(100),
+                    offset: const Offset(1, 1),
+                    blurRadius: 6,
                   ),
-                  Visibility(
-                    visible: isEntrando,
-                    child: TextButton(
-                      onPressed: () {
-                        esqueciMinhaSenhaClicado();
-                      },
-                      child: const Text("Esqueceu a senha?"),
-                    ),
-                  ),
-                  Visibility(
-                    visible: !isEntrando,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          controller: _confirmaController,
-                          decoration: const InputDecoration(
-                            label: Text("Confirme a senha"),
-                          ),
-                        ),
-                        TextFormField(
-                          controller: _nomeController,
-                          decoration: const InputDecoration(
-                            label: Text("Nome de Usuário"),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      botaoEntrarCadastrarClicado();
-                    },
-                    child: Text((isEntrando) ? "Entrar" : "Cadastrar"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        isEntrando = !isEntrando;
-                      });
-                    },
-                    child: Text(
-                      (isEntrando)
-                          ? "Ainda não tem conta? Crie uma!"
-                          : "Já tem uma conta? Que tal entrar?",
-                    ),
-                  ),
+                  Shadow(
+                    color: MyColors.white.withAlpha(100),
+                    offset: const Offset(-1, -1),
+                    blurRadius: 6,
+                  )
                 ],
               ),
             ),
           ),
-        ),
+          Center(
+            child: Container(
+              width: min(300, MediaQuery.of(context).size.width),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: MyColors.white.withAlpha(50),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        "GM Tools",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 42,
+                          fontFamily: GoogleFonts.changaOne().fontFamily,
+                        ),
+                      ),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                          label: Text("E-mail"),
+                        ),
+                        validator: (value) {
+                          if (value == null || value == "") {
+                            return "O valor de e-mail deve ser preenchido";
+                          }
+                          if (!value.contains("@") ||
+                              !value.contains(".") ||
+                              value.length < 4) {
+                            return "O valor do e-mail deve ser válido";
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _senhaController,
+                        decoration: const InputDecoration(label: Text("Senha")),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.length < 4) {
+                            return "Insira uma senha válida.";
+                          }
+                          return null;
+                        },
+                      ),
+                      Visibility(
+                        visible: isEntrando,
+                        child: TextButton(
+                          onPressed: () {
+                            esqueciMinhaSenhaClicado();
+                          },
+                          child: const Text("Esqueceu a senha?"),
+                        ),
+                      ),
+                      Visibility(
+                        visible: !isEntrando,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: _confirmaController,
+                              decoration: const InputDecoration(
+                                label: Text("Confirme a senha"),
+                              ),
+                              obscureText: true,
+                              validator: (value) {
+                                if (value == null || value.length < 4) {
+                                  return "Insira uma confirmação de senha válida.";
+                                }
+                                if (value != _senhaController.text) {
+                                  return "As senhas devem ser iguais.";
+                                }
+                                return null;
+                              },
+                            ),
+                            TextFormField(
+                              controller: _nomeController,
+                              decoration: const InputDecoration(
+                                label: Text("Nome de Usuário"),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.length < 3) {
+                                  return "Insira um nome maior.";
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 32,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          botaoEntrarCadastrarClicado();
+                        },
+                        child: Text((isEntrando) ? "Entrar" : "Cadastrar"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            isEntrando = !isEntrando;
+                          });
+                        },
+                        child: Text(
+                          (isEntrando)
+                              ? "Ainda não tem conta? Crie uma!"
+                              : "Já tem uma conta? Que tal entrar?",
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -143,6 +227,16 @@ class _AuthScreenState extends State<AuthScreen> {
       (String? erro) {
         if (erro != null) {
           showSnackBar(context: context, mensagem: erro);
+        } else {
+          showSnackBar(
+            context: context,
+            mensagem:
+                "Um e-mail de verificação foi enviado. Confira-o antes de fazer login.",
+            isErro: false,
+          );
+          setState(() {
+            isEntrando = true;
+          });
         }
       },
     );
