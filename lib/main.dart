@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: MyColors.darkfgreen,
         scaffoldBackgroundColor: MyColors.white,
         textTheme: GoogleFonts.oxygenTextTheme(),
+        appBarTheme: const AppBarTheme(toolbarHeight: 96, elevation: 0),
       ),
       home: const RoteadorTelas(),
     );
