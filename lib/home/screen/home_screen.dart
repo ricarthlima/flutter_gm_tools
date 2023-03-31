@@ -4,13 +4,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
 import 'package:flutter_gm_tools/auth/services/auth_service.dart';
+import 'package:flutter_gm_tools/home/services/campaing_service.dart';
+import 'package:flutter_gm_tools/home/widgets/campaign_wrap_widget.dart';
 import 'package:flutter_gm_tools/home/widgets/create_campaign_dialog.dart';
 import 'package:flutter_gm_tools/home/widgets/join_dialog.dart';
 import 'package:flutter_gm_tools/home/widgets/user_infos_drawer_header.dart';
+import 'package:flutter_gm_tools/models/campaign.dart';
 
 class HomeScreen extends StatelessWidget {
   final User user;
-  const HomeScreen({super.key, required this.user});
+  HomeScreen({super.key, required this.user});
+
+  final CampaignService campaignService = CampaignService();
 
   @override
   Widget build(BuildContext context) {
@@ -83,23 +88,57 @@ class HomeScreen extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(children: [
-              Row(
-                children: const [
-                  Expanded(
-                    child: Text(
-                      '"Para qual maravilhoso mundo embarcaremos hoje?"',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
-                        overflow: TextOverflow.clip,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: const [
+                    Expanded(
+                      child: Text(
+                        '"Para qual maravilhoso mundo embarcaremos hoje?"',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          overflow: TextOverflow.clip,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ]),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                StreamBuilder(
+                  stream: campaignService.getMyCampaignsStream(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      if (!snapshot.hasData) {
+                        return const Text(
+                            "Ainda nenhuma campanha. Vamos criar uma?");
+                      } else {
+                        List<Campaign> listCampaing = [];
+
+                        for (var doc in snapshot.data!.docs) {
+                          listCampaing.add(Campaign.fromMap(doc.data()));
+                        }
+
+                        return Wrap(
+                          direction: Axis.horizontal,
+                          crossAxisAlignment: WrapCrossAlignment.start,
+                          children: List.generate(
+                            listCampaing.length,
+                            (index) => CampaignWrapWidget(
+                              campaign: listCampaing[index],
+                            ),
+                          ),
+                        );
+                      }
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),

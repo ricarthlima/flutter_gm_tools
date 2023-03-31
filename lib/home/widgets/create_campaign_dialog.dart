@@ -22,10 +22,22 @@ showCreateCampaignDialog({required BuildContext context}) {
         builder: (context, setState) {
           return AlertDialog(
             scrollable: true,
-            title: const Text(
-              "Criar nova campanha",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold),
+            actionsPadding: const EdgeInsets.only(bottom: 32),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Criar nova campanha",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.close),
+                ),
+              ],
             ),
             content: SizedBox(
               width: 350,
@@ -94,15 +106,6 @@ showCreateCampaignDialog({required BuildContext context}) {
             ),
             actionsAlignment: MainAxisAlignment.center,
             actions: [
-              Visibility(
-                visible: !isLoading,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text("Cancelar"),
-                ),
-              ),
               ElevatedButton(
                 onPressed: () {
                   String name = nameController.text;

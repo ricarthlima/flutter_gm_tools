@@ -29,7 +29,8 @@ class Campaign {
         ownerId = map["ownerId"],
         enterCode = map["enterCode"],
         urlBanner = map["urlBanner"],
-        guestsId = map["guestsId"],
+        guestsId =
+            (map["guestsId"] as List<dynamic>).map((e) => e as String).toList(),
         name = map["name"],
         description = map["description"],
         createdAt = DateTime.parse(map["createdAt"]),

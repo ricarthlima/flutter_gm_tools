@@ -26,7 +26,10 @@ class CampaignService {
 
     if (image != null) {
       TaskSnapshot snapshot =
-          await _firebaseStorage.ref("banners/$campaignId.png").putData(image);
+          await _firebaseStorage.ref("banners/$campaignId.png").putData(
+                image,
+                SettableMetadata(contentType: 'image/png'),
+              );
       bannerUrl = await snapshot.ref.getDownloadURL();
     }
 
@@ -46,5 +49,12 @@ class CampaignService {
         .collection("campaigns")
         .doc(campaignId)
         .set(campaign.toMap());
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getMyCampaignsStream() {
+    return _firebaseFirestore
+        .collection("campaigns")
+        .where("ownerId", isEqualTo: _firebaseAuth.currentUser!.uid)
+        .snapshots();
   }
 }
