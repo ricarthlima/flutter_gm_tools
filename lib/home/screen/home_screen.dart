@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
 import 'package:flutter_gm_tools/auth/services/auth_service.dart';
+import 'package:flutter_gm_tools/home/widgets/create_campaign_dialog.dart';
+import 'package:flutter_gm_tools/home/widgets/join_dialog.dart';
 import 'package:flutter_gm_tools/home/widgets/user_infos_drawer_header.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -63,12 +65,16 @@ class HomeScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      joinButtonClicked(context);
+                    },
                     child: const Text("Juntar-se à campanha"),
                   ),
                   const SizedBox(width: 16),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      createCampaignClicked(context);
+                    },
                     child: const Text("Criar uma campanha"),
                   ),
                 ],
@@ -80,12 +86,15 @@ class HomeScreen extends StatelessWidget {
             child: Column(children: [
               Row(
                 children: const [
-                  Text(
-                    '"Para qual maravilhoso mundo embarcaremos hoje?"',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic,
+                  Expanded(
+                    child: Text(
+                      '"Para qual maravilhoso mundo embarcaremos hoje?"',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        overflow: TextOverflow.clip,
+                      ),
                     ),
                   ),
                 ],
@@ -95,5 +104,13 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  joinButtonClicked(BuildContext context) {
+    showJoinDialog(context: context);
+  }
+
+  createCampaignClicked(BuildContext context) {
+    showCreateCampaignDialog(context: context);
   }
 }
