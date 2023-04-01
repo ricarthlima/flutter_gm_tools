@@ -71,10 +71,14 @@ class CampaignService {
         .where("enterCode", isEqualTo: code)
         .get();
 
-    if (snapshot.docs.isNotEmpty) {
+    if (snapshot.docs.isEmpty) {
       return "O código não é válido.";
     } else {
       Campaign campaign = Campaign.fromMap(snapshot.docs[0].data());
+      if (campaign.ownerId == _firebaseAuth.currentUser!.uid) {
+        return "Essa campanha é pertence a você.";
+      }
+
       campaign.guestsId.add(_firebaseAuth.currentUser!.uid);
       await _firebaseFirestore
           .collection("campaigns")

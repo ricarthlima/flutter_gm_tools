@@ -97,12 +97,9 @@ class CampaignWrapWidget extends StatelessWidget {
                       ).then((value) {
                         showMenu(
                           context: context,
-                          position: RelativeRect.fromLTRB(
-                            details.globalPosition.dx,
-                            details.globalPosition.dy,
-                            0,
-                            0,
-                          ),
+                          position: RelativeRect.fromRect(
+                              details.globalPosition & const Size(40, 40),
+                              Offset.zero & const Size(10, 10)),
                           items: [
                             const PopupMenuItem(child: Text("Copiado!")),
                           ],
