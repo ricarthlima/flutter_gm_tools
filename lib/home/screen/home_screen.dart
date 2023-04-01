@@ -88,56 +88,110 @@ class HomeScreen extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: const [
-                    Expanded(
-                      child: Text(
-                        '"Para qual maravilhoso mundo embarcaremos hoje?"',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.italic,
-                          overflow: TextOverflow.clip,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: const [
+                      Expanded(
+                        child: Text(
+                          '"Para qual maravilhoso mundo embarcaremos hoje?"',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                            overflow: TextOverflow.clip,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-                StreamBuilder(
-                  stream: campaignService.getMyCampaignsStream(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else {
-                      if (!snapshot.hasData) {
-                        return const Text(
-                            "Ainda nenhuma campanha. Vamos criar uma?");
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  const Text(
+                    "MINHAS CAMPANHAS",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const SizedBox(height: 16),
+                  StreamBuilder(
+                    stream: campaignService.getMyCampaignsStream(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
                       } else {
-                        List<Campaign> listCampaing = [];
+                        if (snapshot.data!.docs.isEmpty) {
+                          return Container(
+                            height: 200,
+                            alignment: Alignment.centerLeft,
+                            child: const Text(
+                                "Ainda nenhuma campanha! Vamos criar uma nova?"),
+                          );
+                        } else {
+                          List<Campaign> listCampaing = [];
 
-                        for (var doc in snapshot.data!.docs) {
-                          listCampaing.add(Campaign.fromMap(doc.data()));
-                        }
+                          for (var doc in snapshot.data!.docs) {
+                            listCampaing.add(Campaign.fromMap(doc.data()));
+                          }
 
-                        return Wrap(
-                          direction: Axis.horizontal,
-                          crossAxisAlignment: WrapCrossAlignment.start,
-                          children: List.generate(
-                            listCampaing.length,
-                            (index) => CampaignWrapWidget(
-                              campaign: listCampaing[index],
+                          return SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: List.generate(
+                                listCampaing.length,
+                                (index) => CampaignWrapWidget(
+                                  campaign: listCampaing[index],
+                                ),
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        }
                       }
-                    }
-                  },
-                ),
-              ],
+                    },
+                  ),
+                  const Divider(),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "OUTRAS CAMPANHAS",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const SizedBox(height: 16),
+                  StreamBuilder(
+                    stream: campaignService.getOthersCampaignsStream(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else {
+                        if (snapshot.data!.docs.isEmpty) {
+                          return Container(
+                            alignment: Alignment.centerLeft,
+                            height: 200,
+                            child: const Text(
+                                "Hey! Procure amigos para jogar com você!"),
+                          );
+                        } else {
+                          List<Campaign> listCampaing = [];
+
+                          for (var doc in snapshot.data!.docs) {
+                            listCampaing.add(Campaign.fromMap(doc.data()));
+                          }
+
+                          return SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: List.generate(
+                                listCampaing.length,
+                                (index) => CampaignWrapWidget(
+                                  campaign: listCampaing[index],
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],

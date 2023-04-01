@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
 import 'package:flutter_gm_tools/models/campaign.dart';
 
@@ -61,6 +62,61 @@ class CampaignWrapWidget extends StatelessWidget {
                       "Jogado em: ${campaign.updatedAt.toString().substring(0, 10)}"),
                   Text(
                       "Criado em: ${campaign.createdAt.toString().substring(0, 10)}"),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            alignment: Alignment.topRight,
+            child: Container(
+              width: 120,
+              height: 30,
+              decoration: const BoxDecoration(
+                color: MyColors.darkgrey,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(16),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    campaign.enterCode,
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(
+                      color: MyColors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  InkWell(
+                    onTapDown: (details) {
+                      Clipboard.setData(
+                        ClipboardData(text: campaign.enterCode),
+                      ).then((value) {
+                        showMenu(
+                          context: context,
+                          position: RelativeRect.fromLTRB(
+                            details.globalPosition.dx,
+                            details.globalPosition.dy,
+                            0,
+                            0,
+                          ),
+                          items: [
+                            const PopupMenuItem(child: Text("Copiado!")),
+                          ],
+                        );
+                      });
+                    },
+                    onTap: () {},
+                    child: const Icon(
+                      Icons.copy,
+                      size: 16,
+                      color: MyColors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
                 ],
               ),
             ),

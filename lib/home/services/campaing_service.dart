@@ -57,4 +57,31 @@ class CampaignService {
         .where("ownerId", isEqualTo: _firebaseAuth.currentUser!.uid)
         .snapshots();
   }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getOthersCampaignsStream() {
+    return _firebaseFirestore
+        .collection("campaigns")
+        .where("guestsId", arrayContains: _firebaseAuth.currentUser!.uid)
+        .snapshots();
+  }
+
+  Future<String?> joinCampaignByCode({required String code}) async {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await _firebaseFirestore
+        .collection("campaigns")
+        .where("enterCode", isEqualTo: code)
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      return "O código não é válido.";
+    } else {
+      Campaign campaign = Campaign.fromMap(snapshot.docs[0].data());
+      campaign.guestsId.add(_firebaseAuth.currentUser!.uid);
+      await _firebaseFirestore
+          .collection("campaigns")
+          .doc(campaign.id)
+          .set(campaign.toMap());
+    }
+
+    return null;
+  }
 }
