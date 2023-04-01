@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_gm_tools/models/public_user.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   Future<String?> entrarUsuario(
       {required String email, required String senha}) async {
@@ -33,6 +36,7 @@ class AuthService {
     required String nome,
   }) async {
     try {
+      // Cadastrar no Authentication
       UserCredential userCredential =
           await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
@@ -41,8 +45,16 @@ class AuthService {
 
       await userCredential.user!.updateDisplayName(nome);
 
+      // Cadastrar no Cloud Firestore
+      PublicUser user = PublicUser(
+        uid: userCredential.user!.uid,
+        displayName: nome,
+        urlPhoto: "",
+      );
+      _firebaseFirestore.collection("users").doc(user.uid).set(user.toMap());
+
+      // Verificar e-mail
       await userCredential.user!.sendEmailVerification();
-      //print("Funcionou! Chegamos até essa linha!");
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "email-already-in-use":

@@ -1,6 +1,7 @@
 class Campaign {
   String id;
   String ownerId;
+  String ownerName;
   String enterCode;
 
   String? urlBanner;
@@ -15,6 +16,7 @@ class Campaign {
   Campaign({
     required this.id,
     required this.ownerId,
+    required this.ownerName,
     required this.enterCode,
     this.urlBanner,
     required this.guestsId,
@@ -27,6 +29,7 @@ class Campaign {
   Campaign.fromMap(Map<String, dynamic> map)
       : id = map["id"],
         ownerId = map["ownerId"],
+        ownerName = map["ownerName"],
         enterCode = map["enterCode"],
         urlBanner = map["urlBanner"],
         guestsId =
@@ -40,6 +43,7 @@ class Campaign {
     return {
       "id": id,
       "ownerId": ownerId,
+      "ownerName": ownerName,
       "enterCode": enterCode,
       "urlBanner": urlBanner,
       "guestsId": guestsId,

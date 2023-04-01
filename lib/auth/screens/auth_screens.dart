@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
 import 'package:flutter_gm_tools/auth/services/auth_service.dart';
+import 'package:flutter_gm_tools/home/widgets/create_campaign_dialog.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../_core/show_snackbar.dart';
@@ -26,6 +27,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   AuthService authService = AuthService();
 
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,6 +114,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       TextFormField(
                         controller: _senhaController,
                         decoration: const InputDecoration(label: Text("Senha")),
+                        maxLength: 13,
                         obscureText: true,
                         validator: (value) {
                           if (value == null || value.length < 4) {
@@ -171,7 +174,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         onPressed: () {
                           botaoEntrarCadastrarClicado();
                         },
-                        child: Text((isEntrando) ? "Entrar" : "Cadastrar"),
+                        child: (isLoading)
+                            ? const CircularProgressIndicatorElevatedButton()
+                            : Text((isEntrando) ? "Entrar" : "Cadastrar"),
                       ),
                       TextButton(
                         onPressed: () {
@@ -202,6 +207,9 @@ class _AuthScreenState extends State<AuthScreen> {
     String nome = _nomeController.text;
 
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
       if (isEntrando) {
         _entrarUsuario(email: email, senha: senha);
       } else {
@@ -214,6 +222,9 @@ class _AuthScreenState extends State<AuthScreen> {
     authService.entrarUsuario(email: email, senha: senha).then((String? erro) {
       if (erro != null) {
         showSnackBar(context: context, mensagem: erro);
+        setState(() {
+          isLoading = false;
+        });
       }
     });
   }
@@ -227,6 +238,9 @@ class _AuthScreenState extends State<AuthScreen> {
       (String? erro) {
         if (erro != null) {
           showSnackBar(context: context, mensagem: erro);
+          setState(() {
+            isLoading = false;
+          });
         } else {
           showSnackBar(
             context: context,
@@ -236,6 +250,7 @@ class _AuthScreenState extends State<AuthScreen> {
           );
           setState(() {
             isEntrando = true;
+            isLoading = false;
           });
         }
       },

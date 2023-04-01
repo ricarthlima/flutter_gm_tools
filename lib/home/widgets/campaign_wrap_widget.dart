@@ -67,6 +67,40 @@ class CampaignWrapWidget extends StatelessWidget {
             ),
           ),
           Container(
+            alignment: Alignment.topLeft,
+            child: Container(
+              width: 150,
+              height: 30,
+              decoration: BoxDecoration(
+                color: MyColors.darkRed,
+                borderRadius: const BorderRadius.only(
+                  bottomRight: Radius.circular(16),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(width: 4),
+                  const Icon(
+                    Icons.people,
+                    size: 16,
+                    color: MyColors.white,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    campaign.ownerName,
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(
+                      color: MyColors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
             alignment: Alignment.topRight,
             child: Container(
               width: 120,

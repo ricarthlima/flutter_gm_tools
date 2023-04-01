@@ -120,4 +120,6 @@ class MyColors {
     700: Color(0xFFD3D300),
   });
   static const int _darkgreyAccentValue = 0xFFFFFF20;
+
+  static Color darkRed = const Color(0xFF8b0000);
 }

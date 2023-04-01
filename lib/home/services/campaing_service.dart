@@ -19,6 +19,7 @@ class CampaignService {
   }) async {
     String campaignId = const Uuid().v1();
     String ownerId = _firebaseAuth.currentUser!.uid;
+    String ownerName = _firebaseAuth.currentUser!.displayName!;
     String enterCode =
         "${Random().nextInt(8999) + 1000}-${Random().nextInt(8999) + 1000}";
 
@@ -36,6 +37,7 @@ class CampaignService {
     Campaign campaign = Campaign(
       id: campaignId,
       ownerId: ownerId,
+      ownerName: ownerName,
       enterCode: enterCode,
       guestsId: [],
       name: name,
