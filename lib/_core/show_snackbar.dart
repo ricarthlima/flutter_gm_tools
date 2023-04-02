@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gm_tools/_core/colors.dart';
 
 showSnackBar({
   required BuildContext context,
@@ -9,7 +10,7 @@ showSnackBar({
 }) {
   SnackBar snackBar = SnackBar(
     content: Text(mensagem),
-    backgroundColor: (isErro) ? Colors.red : Colors.green,
+    backgroundColor: (isErro) ? MyColors.darkRed : MyColors.happyGreen,
     action: (actionFunction != null && actionName != null)
         ? SnackBarAction(
             label: actionName,

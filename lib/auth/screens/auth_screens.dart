@@ -114,13 +114,15 @@ class _AuthScreenState extends State<AuthScreen> {
                       TextFormField(
                         controller: _senhaController,
                         decoration: const InputDecoration(label: Text("Senha")),
-                        maxLength: 13,
                         obscureText: true,
                         validator: (value) {
                           if (value == null || value.length < 4) {
                             return "Insira uma senha válida.";
                           }
                           return null;
+                        },
+                        onFieldSubmitted: (value) {
+                          botaoEntrarCadastrarClicado();
                         },
                       ),
                       Visibility(
@@ -154,6 +156,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             ),
                             TextFormField(
                               controller: _nomeController,
+                              maxLength: 13,
                               decoration: const InputDecoration(
                                 label: Text("Nome de Usuário"),
                               ),

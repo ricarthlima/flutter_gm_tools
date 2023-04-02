@@ -122,4 +122,5 @@ class MyColors {
   static const int _darkgreyAccentValue = 0xFFFFFF20;
 
   static Color darkRed = const Color(0xFF8b0000);
+  static Color happyGreen = const Color.fromARGB(255, 0, 139, 5);
 }

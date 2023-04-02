@@ -28,7 +28,7 @@ class CampaignWrapWidget extends StatelessWidget {
             child: FloatingActionButton(
               elevation: 0,
               onPressed: () {},
-              child: const Icon(Icons.start),
+              child: const Icon(Icons.play_arrow_rounded),
             ),
           ),
           Container(
@@ -72,7 +72,7 @@ class CampaignWrapWidget extends StatelessWidget {
               width: 150,
               height: 30,
               decoration: BoxDecoration(
-                color: MyColors.darkRed,
+                color: MyColors.darkgrey.withAlpha(100),
                 borderRadius: const BorderRadius.only(
                   bottomRight: Radius.circular(16),
                 ),
@@ -90,6 +90,7 @@ class CampaignWrapWidget extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     campaign.ownerName,
+                    overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.left,
                     style: const TextStyle(
                       color: MyColors.white,
