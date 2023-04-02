@@ -40,6 +40,15 @@ class AuthService {
     required String nome,
   }) async {
     try {
+      // Verificar nome de usuário
+      QuerySnapshot<Map<String, dynamic>> snapshot = await _firebaseFirestore
+          .collection("users")
+          .where("displayName")
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        return "O nome de usuário está em uso.";
+      }
+
       // Cadastrar no Authentication
       UserCredential userCredential =
           await _firebaseAuth.createUserWithEmailAndPassword(
