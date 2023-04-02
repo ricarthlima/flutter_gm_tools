@@ -1,7 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
+import 'package:flutter_gm_tools/auth/services/auth_service.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 
-class UserInfosDrawerHeader extends StatelessWidget {
+class UserInfosDrawerHeader extends StatefulWidget {
   final String? urlPhotoImage;
   final String name;
   final String creationDate;
@@ -15,6 +19,13 @@ class UserInfosDrawerHeader extends StatelessWidget {
   });
 
   @override
+  State<UserInfosDrawerHeader> createState() => _UserInfosDrawerHeaderState();
+}
+
+class _UserInfosDrawerHeaderState extends State<UserInfosDrawerHeader> {
+  bool isLoading = false;
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       color: MyColors.darkfgreen,
@@ -23,21 +34,68 @@ class UserInfosDrawerHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          (urlPhotoImage != null)
-              ? Image.network(
-                  urlPhotoImage!,
-                  height: 64,
-                )
-              : CircleAvatar(
+          SizedBox(
+            width: 128,
+            height: 128,
+            child: Stack(
+              children: [
+                const CircleAvatar(
                   radius: 64,
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.edit),
+                ),
+                (widget.urlPhotoImage != null)
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(64),
+                        child: Image.network(
+                          widget.urlPhotoImage!,
+                          fit: BoxFit.fitWidth,
+                          height: 128,
+                          width: 128,
+                        ),
+                      )
+                    : Container(),
+                Visibility(
+                  visible: isLoading,
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: MyColors.white,
+                    ),
                   ),
                 ),
+                Container(
+                  alignment: (widget.urlPhotoImage != null)
+                      ? Alignment.bottomRight
+                      : Alignment.center,
+                  child: IconButton(
+                    onPressed: () {
+                      ImagePickerWeb.getImageAsBytes().then(
+                        (Uint8List? loadedImage) {
+                          if (loadedImage != null) {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            AuthService()
+                                .uploadUserImage(image: loadedImage)
+                                .then((value) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                            });
+                          }
+                        },
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.edit,
+                      color: MyColors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
           Text(
-            name,
+            widget.name,
             style: const TextStyle(
               color: MyColors.white,
               fontWeight: FontWeight.bold,
@@ -46,14 +104,14 @@ class UserInfosDrawerHeader extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            "Membro desde: $creationDate",
+            "Membro desde: ${widget.creationDate}",
             style: const TextStyle(
               color: MyColors.white,
               fontSize: 12,
             ),
           ),
           Text(
-            "Último login: $lastSignin",
+            "Último login: ${widget.lastSignin}",
             style: const TextStyle(
               color: MyColors.white,
               fontSize: 12,

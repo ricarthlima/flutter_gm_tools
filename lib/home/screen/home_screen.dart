@@ -27,6 +27,7 @@ class HomeScreen extends StatelessWidget {
         width: min(512, MediaQuery.of(context).size.width),
         child: ListView(children: [
           UserInfosDrawerHeader(
+            urlPhotoImage: user.photoURL,
             name: user.displayName!,
             creationDate:
                 user.metadata.creationTime!.toString().substring(0, 10),

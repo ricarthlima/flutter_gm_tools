@@ -1,11 +1,43 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
 import 'package:flutter_gm_tools/models/campaign.dart';
+import 'package:flutter_gm_tools/models/public_user.dart';
 
-class CampaignWrapWidget extends StatelessWidget {
+class CampaignWrapWidget extends StatefulWidget {
   final Campaign campaign;
   const CampaignWrapWidget({super.key, required this.campaign});
+
+  @override
+  State<CampaignWrapWidget> createState() => _CampaignWrapWidgetState();
+}
+
+class _CampaignWrapWidgetState extends State<CampaignWrapWidget> {
+  String? urlOwnerImage;
+
+  @override
+  void initState() {
+    _checkOwnerImage();
+    super.initState();
+  }
+
+  _checkOwnerImage() {
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(widget.campaign.ownerId)
+        .get()
+        .then((snapshot) {
+      if (snapshot.data() != null && snapshot.data()!.isNotEmpty) {
+        PublicUser user = PublicUser.fromMap(snapshot.data()!);
+        if (user.urlPhoto != "") {
+          setState(() {
+            urlOwnerImage = user.urlPhoto;
+          });
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +65,12 @@ class CampaignWrapWidget extends StatelessWidget {
           ),
           Container(
             alignment: Alignment.topCenter,
-            child: (campaign.urlBanner != null)
+            child: (widget.campaign.urlBanner != null)
                 ? ClipRRect(
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(4),
                     ),
-                    child: Image.network(campaign.urlBanner!),
+                    child: Image.network(widget.campaign.urlBanner!),
                   )
                 : Container(),
           ),
@@ -52,16 +84,16 @@ class CampaignWrapWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    campaign.name,
+                    widget.campaign.name,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                      "Jogado em: ${campaign.updatedAt.toString().substring(0, 10)}"),
+                      "Jogado em: ${widget.campaign.updatedAt.toString().substring(0, 10)}"),
                   Text(
-                      "Criado em: ${campaign.createdAt.toString().substring(0, 10)}"),
+                      "Criado em: ${widget.campaign.createdAt.toString().substring(0, 10)}"),
                 ],
               ),
             ),
@@ -82,14 +114,23 @@ class CampaignWrapWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(width: 4),
-                  const Icon(
-                    Icons.people,
-                    size: 16,
-                    color: MyColors.white,
-                  ),
+                  (urlOwnerImage != null)
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            urlOwnerImage!,
+                            height: 16,
+                            width: 16,
+                          ),
+                        )
+                      : const Icon(
+                          Icons.people,
+                          size: 16,
+                          color: MyColors.white,
+                        ),
                   const SizedBox(width: 8),
                   Text(
-                    campaign.ownerName,
+                    widget.campaign.ownerName,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.left,
                     style: const TextStyle(
@@ -117,7 +158,7 @@ class CampaignWrapWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    campaign.enterCode,
+                    widget.campaign.enterCode,
                     textAlign: TextAlign.right,
                     style: const TextStyle(
                       color: MyColors.white,
@@ -128,7 +169,7 @@ class CampaignWrapWidget extends StatelessWidget {
                   InkWell(
                     onTapDown: (details) {
                       Clipboard.setData(
-                        ClipboardData(text: campaign.enterCode),
+                        ClipboardData(text: widget.campaign.enterCode),
                       ).then((value) {
                         showMenu(
                           context: context,

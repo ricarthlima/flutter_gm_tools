@@ -1,10 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_gm_tools/models/public_user.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
   Future<String?> entrarUsuario(
       {required String email, required String senha}) async {
@@ -99,5 +103,31 @@ class AuthService {
       return e.code;
     }
     return null;
+  }
+
+  Future<String?> uploadUserImage({
+    required Uint8List image,
+  }) async {
+    try {
+      TaskSnapshot snapshot = await _firebaseStorage
+          .ref("avatars/${_firebaseAuth.currentUser!.uid}.png")
+          .putData(
+            image,
+            SettableMetadata(contentType: 'image/png'),
+          );
+
+      String urlDownload = await snapshot.ref.getDownloadURL();
+
+      await _firebaseAuth.currentUser!.updatePhotoURL(urlDownload);
+      await _firebaseFirestore
+          .collection("users")
+          .doc(_firebaseAuth.currentUser!.uid)
+          .update({
+        "urlPhoto": urlDownload,
+      });
+      return null;
+    } on FirebaseException catch (e) {
+      return e.message;
+    }
   }
 }

@@ -80,7 +80,9 @@ class CampaignService {
       if (campaign.ownerId == _firebaseAuth.currentUser!.uid) {
         return "Essa campanha é pertence a você.";
       }
-
+      if (campaign.guestsId.contains(_firebaseAuth.currentUser!.uid)) {
+        return "Você já faz parte desta campanha.";
+      }
       campaign.guestsId.add(_firebaseAuth.currentUser!.uid);
       await _firebaseFirestore
           .collection("campaigns")
