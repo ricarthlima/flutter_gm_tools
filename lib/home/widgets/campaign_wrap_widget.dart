@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
+import 'package:flutter_gm_tools/gm_view/screens/gm_view_screen.dart';
 import 'package:flutter_gm_tools/models/campaign.dart';
 import 'package:flutter_gm_tools/models/public_user.dart';
 
@@ -57,10 +58,19 @@ class _CampaignWrapWidgetState extends State<CampaignWrapWidget> {
           Container(
             margin: const EdgeInsets.only(right: 16, bottom: 13),
             alignment: Alignment.bottomRight,
-            child: FloatingActionButton(
-              elevation: 0,
-              onPressed: () {},
-              child: const Icon(Icons.play_arrow_rounded),
+            child: InkWell(
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        GMViewScreen(campaign: widget.campaign),
+                  ),
+                );
+              },
+              child: const CircleAvatar(
+                child: Icon(Icons.play_arrow_rounded),
+              ),
             ),
           ),
           Container(
