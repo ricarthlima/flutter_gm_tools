@@ -1,0 +1,4 @@
+enum ScreensEnum {
+  roteador,
+  gmview,
+}

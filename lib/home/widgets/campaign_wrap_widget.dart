@@ -56,24 +56,6 @@ class _CampaignWrapWidgetState extends State<CampaignWrapWidget> {
       child: Stack(
         children: [
           Container(
-            margin: const EdgeInsets.only(right: 16, bottom: 13),
-            alignment: Alignment.bottomRight,
-            child: InkWell(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        GMViewScreen(campaign: widget.campaign),
-                  ),
-                );
-              },
-              child: const CircleAvatar(
-                child: Icon(Icons.play_arrow_rounded),
-              ),
-            ),
-          ),
-          Container(
             alignment: Alignment.topCenter,
             child: (widget.campaign.urlBanner != null)
                 ? ClipRRect(
@@ -201,6 +183,24 @@ class _CampaignWrapWidgetState extends State<CampaignWrapWidget> {
                   ),
                   const SizedBox(width: 4),
                 ],
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(right: 16, bottom: 13),
+            alignment: Alignment.bottomRight,
+            child: InkWell(
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        GMViewScreen(campaign: widget.campaign),
+                  ),
+                );
+              },
+              child: const CircleAvatar(
+                child: Icon(Icons.play_arrow_rounded),
               ),
             ),
           ),

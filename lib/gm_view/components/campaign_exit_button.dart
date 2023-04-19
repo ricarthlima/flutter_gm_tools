@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../_core/colors.dart';
-import '../../main.dart';
+import '../../roteador_telas.dart';
 
 class CampaignExitButton extends StatelessWidget {
   const CampaignExitButton({super.key});

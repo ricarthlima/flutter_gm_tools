@@ -17,16 +17,12 @@ class _GMViewScreenState extends State<GMViewScreen> {
     return Scaffold(
       backgroundColor: MyColors.darkgrey,
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           CampaignViewHeader(campaign: widget.campaign),
-          const Text(
-            "Pesquisa 'dashboard' no pub.dev",
-            style: TextStyle(color: Colors.white),
-          ),
         ],
       ),
     );
   }
+
+  clickAudioTab() {}
 }
