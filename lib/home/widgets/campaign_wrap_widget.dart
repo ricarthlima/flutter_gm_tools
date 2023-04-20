@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
-import 'package:flutter_gm_tools/gm_view/screens/gm_view_screen.dart';
+import 'package:flutter_gm_tools/campaign/screens/campaign_screen.dart';
 import 'package:flutter_gm_tools/models/campaign.dart';
 import 'package:flutter_gm_tools/models/public_user.dart';
 
@@ -195,7 +195,7 @@ class _CampaignWrapWidgetState extends State<CampaignWrapWidget> {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        GMViewScreen(campaign: widget.campaign),
+                        CampaignScreen(campaign: widget.campaign),
                   ),
                 );
               },

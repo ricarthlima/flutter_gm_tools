@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
 import 'package:flutter_gm_tools/_core/enum_tabs.dart';
-import 'package:flutter_gm_tools/gm_view/components/campaign_view_header.dart';
+import 'package:flutter_gm_tools/campaign/components/campaign_view_header.dart';
 import 'package:flutter_gm_tools/models/campaign.dart';
 
-class GMViewScreen extends StatefulWidget {
+class CampaignScreen extends StatefulWidget {
   final Campaign campaign;
-  const GMViewScreen({super.key, required this.campaign});
+  const CampaignScreen({super.key, required this.campaign});
 
   @override
-  State<GMViewScreen> createState() => _GMViewScreenState();
+  State<CampaignScreen> createState() => _CampaignScreenState();
 }
 
-class _GMViewScreenState extends State<GMViewScreen> {
+class _CampaignScreenState extends State<CampaignScreen> {
   TabsEnum currentTab = TabsEnum.sounds;
 
   @override

@@ -4,7 +4,7 @@ import "package:flutter_gm_tools/_core/check_owner_image.dart";
 import "package:flutter_gm_tools/models/campaign.dart";
 import "package:google_fonts/google_fonts.dart";
 
-import "../../_core/colors.dart";
+import '../../_core/colors.dart';
 import "campaign_exit_button.dart";
 
 class CampaignViewHeader extends StatefulWidget {
