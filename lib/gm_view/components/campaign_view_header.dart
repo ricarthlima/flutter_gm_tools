@@ -1,13 +1,28 @@
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 import "package:flutter_gm_tools/_core/check_owner_image.dart";
 import "package:flutter_gm_tools/models/campaign.dart";
+import "package:google_fonts/google_fonts.dart";
 
 import "../../_core/colors.dart";
 import "campaign_exit_button.dart";
 
 class CampaignViewHeader extends StatefulWidget {
   final Campaign campaign;
-  const CampaignViewHeader({super.key, required this.campaign});
+  final Function clickSound;
+  final Function clickNotes;
+  final Function clickImages;
+  final Function clickMaps;
+  final Function clickSettings;
+  const CampaignViewHeader({
+    super.key,
+    required this.campaign,
+    required this.clickSound,
+    required this.clickNotes,
+    required this.clickImages,
+    required this.clickMaps,
+    required this.clickSettings,
+  });
 
   @override
   State<CampaignViewHeader> createState() => _CampaignViewHeaderState();
@@ -50,33 +65,35 @@ class _CampaignViewHeaderState extends State<CampaignViewHeader> {
               Visibility(
                 visible: !isRetracted,
                 child: Container(
-                  alignment: Alignment.bottomLeft,
+                  alignment: Alignment.bottomCenter,
                   child: Container(
-                    padding: const EdgeInsets.only(left: 16),
                     width: 500,
                     height: 75,
                     decoration: BoxDecoration(
-                      color: MyColors.darkgrey.withAlpha(150),
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(16),
+                      color: MyColors.darkgrey.withAlpha(200),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(24),
                       ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           widget.campaign.name,
-                          style: const TextStyle(
-                            fontSize: 28,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 26,
                             color: MyColors.white,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: GoogleFonts.inconsolata().fontFamily,
                           ),
                         ),
+                        const SizedBox(height: 6),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const SizedBox(width: 4),
                             (urlOwnerImage != null)
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
@@ -101,6 +118,41 @@ class _CampaignViewHeaderState extends State<CampaignViewHeader> {
                                 fontSize: 16,
                               ),
                             ),
+                            const SizedBox(width: 8),
+                            InkWell(
+                              onTapDown: (details) {
+                                Clipboard.setData(
+                                  ClipboardData(
+                                      text: widget.campaign.enterCode),
+                                ).then((value) {
+                                  showMenu(
+                                    context: context,
+                                    position: RelativeRect.fromRect(
+                                        details.globalPosition &
+                                            const Size(40, 40),
+                                        Offset.zero & const Size(10, 10)),
+                                    items: [
+                                      const PopupMenuItem(
+                                          child: Text("Copiado!")),
+                                    ],
+                                  );
+                                });
+                              },
+                              onTap: () {},
+                              child: const Icon(
+                                Icons.copy,
+                                size: 14,
+                                color: MyColors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              widget.campaign.enterCode,
+                              style: const TextStyle(
+                                color: MyColors.white,
+                                fontSize: 16,
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -116,31 +168,46 @@ class _CampaignViewHeaderState extends State<CampaignViewHeader> {
           height: 48,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: MyColors.white,
             borderRadius: BorderRadius.vertical(
               bottom: Radius.circular(8),
             ),
           ),
-          child: ListView(
-            scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  widget.clickSound();
+                },
                 icon: const Icon(Icons.audiotrack_rounded),
               ),
               const SizedBox(width: 16),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  widget.clickNotes();
+                },
+                icon: const Icon(Icons.note),
+              ),
+              const SizedBox(width: 16),
+              IconButton(
+                onPressed: () {
+                  widget.clickImages();
+                },
                 icon: const Icon(Icons.image),
               ),
               const SizedBox(width: 16),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  widget.clickMaps();
+                },
                 icon: const Icon(Icons.map),
               ),
               const SizedBox(width: 16),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  widget.clickSettings();
+                },
                 icon: const Icon(Icons.settings),
               ),
             ],
