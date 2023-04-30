@@ -146,7 +146,7 @@ class _CampaignViewHeaderState extends State<CampaignViewHeader> {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            Text(
+                            SelectableText(
                               widget.campaign.enterCode,
                               style: const TextStyle(
                                 color: MyColors.white,
@@ -173,61 +173,69 @@ class _CampaignViewHeaderState extends State<CampaignViewHeader> {
               bottom: Radius.circular(8),
             ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Stack(
             children: [
-              IconButton(
-                onPressed: () {
-                  widget.clickSound();
-                },
-                icon: const Icon(Icons.audiotrack_rounded),
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        widget.clickSound();
+                      },
+                      icon: const Icon(Icons.audiotrack_rounded),
+                    ),
+                    const SizedBox(width: 16),
+                    IconButton(
+                      onPressed: () {
+                        widget.clickNotes();
+                      },
+                      icon: const Icon(Icons.note),
+                    ),
+                    const SizedBox(width: 16),
+                    IconButton(
+                      onPressed: () {
+                        widget.clickImages();
+                      },
+                      icon: const Icon(Icons.image),
+                    ),
+                    const SizedBox(width: 16),
+                    IconButton(
+                      onPressed: () {
+                        widget.clickMaps();
+                      },
+                      icon: const Icon(Icons.map),
+                    ),
+                    const SizedBox(width: 16),
+                    IconButton(
+                      onPressed: () {
+                        widget.clickSettings();
+                      },
+                      icon: const Icon(Icons.settings),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(width: 16),
-              IconButton(
-                onPressed: () {
-                  widget.clickNotes();
-                },
-                icon: const Icon(Icons.note),
-              ),
-              const SizedBox(width: 16),
-              IconButton(
-                onPressed: () {
-                  widget.clickImages();
-                },
-                icon: const Icon(Icons.image),
-              ),
-              const SizedBox(width: 16),
-              IconButton(
-                onPressed: () {
-                  widget.clickMaps();
-                },
-                icon: const Icon(Icons.map),
-              ),
-              const SizedBox(width: 16),
-              IconButton(
-                onPressed: () {
-                  widget.clickSettings();
-                },
-                icon: const Icon(Icons.settings),
+              Container(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: Icon(
+                    (!isRetracted)
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                  ),
+                  onPressed: () {
+                    setState(
+                      () {
+                        isRetracted = !isRetracted;
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),
-        ),
-        IconButton(
-          focusColor: Colors.white,
-          color: Colors.white.withAlpha(50),
-          icon: Icon(
-            (!isRetracted)
-                ? Icons.keyboard_arrow_up_rounded
-                : Icons.keyboard_arrow_down_rounded,
-          ),
-          onPressed: () {
-            setState(
-              () {
-                isRetracted = !isRetracted;
-              },
-            );
-          },
         ),
       ],
     );
