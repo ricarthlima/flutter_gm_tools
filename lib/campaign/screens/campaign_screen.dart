@@ -31,7 +31,7 @@ class _CampaignScreenState extends State<CampaignScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.darkgrey,
+      backgroundColor: MyColors.darkfgreen,
       body: Column(
         children: [
           CampaignViewHeader(
@@ -52,17 +52,22 @@ class _CampaignScreenState extends State<CampaignScreen> {
               clickTab(TabsEnum.sounds);
             },
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: innerScreens[currentTab] != null
-                ? innerScreens[currentTab]!
-                : Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      currentTab.name,
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                child: innerScreens[currentTab] != null
+                    ? innerScreens[currentTab]!
+                    : Container(
+                        alignment: Alignment.center,
+                        child: Text(
+                          currentTab.name,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+              ),
+            ),
           ),
         ],
       ),

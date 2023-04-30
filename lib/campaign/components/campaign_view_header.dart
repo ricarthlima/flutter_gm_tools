@@ -168,7 +168,7 @@ class _CampaignViewHeaderState extends State<CampaignViewHeader> {
           height: 48,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: const BoxDecoration(
-            color: MyColors.white,
+            color: MyColors.grey,
             borderRadius: BorderRadius.vertical(
               bottom: Radius.circular(8),
             ),
