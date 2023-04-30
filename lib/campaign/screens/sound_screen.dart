@@ -9,7 +9,6 @@ import 'package:flutter_gm_tools/_core/show_snackbar.dart';
 import 'package:flutter_gm_tools/campaign/helpers/sound_tags.dart';
 import 'package:flutter_gm_tools/campaign/models/sound_model.dart';
 import 'package:flutter_gm_tools/campaign/services/sound_service.dart';
-import 'package:flutter_gm_tools/home/widgets/create_campaign_dialog.dart';
 import 'package:flutter_gm_tools/models/campaign.dart';
 
 class SoundScreen extends StatefulWidget {
@@ -21,94 +20,38 @@ class SoundScreen extends StatefulWidget {
 }
 
 class _SoundScreenState extends State<SoundScreen> {
-  bool isLoading = true;
-  Map<SoundTag, List<SoundModel>> dbSounds = {};
-
-  @override
-  void initState() {
-    reload();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return (isLoading)
-        ? const Center(
-            child: CircularProgressIndicatorElevatedButton(),
-          )
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              RowSoundTag(
-                tag: SoundTag.music,
-                campaign: widget.campaign,
-                listSounds: dbSounds[SoundTag.music],
-                reload: reload,
-              ),
-              RowSoundTag(
-                tag: SoundTag.ambience,
-                campaign: widget.campaign,
-                listSounds: dbSounds[SoundTag.ambience],
-                reload: reload,
-              ),
-              RowSoundTag(
-                tag: SoundTag.effect,
-                campaign: widget.campaign,
-                listSounds: dbSounds[SoundTag.effect],
-                reload: reload,
-              ),
-              RowSoundTag(
-                tag: SoundTag.others,
-                campaign: widget.campaign,
-                listSounds: dbSounds[SoundTag.others],
-                reload: reload,
-              ),
-            ],
-          );
-  }
-
-  reload() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    dbSounds = {};
-
-    List<SoundModel> listAllSounds =
-        await SoundService(campaign: widget.campaign).getAllSounds();
-
-    for (SoundModel soundModel in listAllSounds) {
-      if (dbSounds[soundModel.tag] == null) {
-        dbSounds[soundModel.tag] = [];
-      }
-
-      dbSounds[soundModel.tag]!.add(soundModel);
-    }
-
-    setState(() {
-      isLoading = false;
-    });
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RowSoundTag(tag: SoundTag.music, campaign: widget.campaign),
+        RowSoundTag(tag: SoundTag.ambience, campaign: widget.campaign),
+        RowSoundTag(tag: SoundTag.effect, campaign: widget.campaign),
+        RowSoundTag(tag: SoundTag.others, campaign: widget.campaign),
+      ],
+    );
   }
 }
 
 class RowSoundTag extends StatefulWidget {
   final SoundTag tag;
   final Campaign campaign;
-  final List<SoundModel>? listSounds;
-  final Function reload;
-  const RowSoundTag(
-      {super.key,
-      required this.tag,
-      required this.campaign,
-      required this.listSounds,
-      required this.reload});
+  const RowSoundTag({super.key, required this.tag, required this.campaign});
 
   @override
   State<RowSoundTag> createState() => _RowSoundTagState();
 }
 
 class _RowSoundTagState extends State<RowSoundTag> {
+  List<SoundModel> listSounds = [];
   bool isLoading = false;
+
+  @override
+  void initState() {
+    reload();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,12 +93,11 @@ class _RowSoundTagState extends State<RowSoundTag> {
                 ? const Center(
                     child: CircularProgressIndicator(),
                   )
-                : (widget.listSounds != null)
+                : (listSounds.isNotEmpty)
                     ? ListView(
                         scrollDirection: Axis.horizontal,
-                        children:
-                            List.generate(widget.listSounds!.length, (index) {
-                          SoundModel soundModel = widget.listSounds![index];
+                        children: List.generate(listSounds.length, (index) {
+                          SoundModel soundModel = listSounds[index];
                           return Container(
                             width: 100,
                             height: 128,
@@ -240,7 +182,7 @@ class _RowSoundTagState extends State<RowSoundTag> {
         setState(() {
           isLoading = false;
         });
-        widget.reload();
+        reload();
         showSnackBar(
             context: context,
             mensagem: "Som armazenado com sucesso!",
@@ -257,6 +199,26 @@ class _RowSoundTagState extends State<RowSoundTag> {
 
   removeSound(SoundModel soundModel) async {
     await soundModel.reference.delete();
-    widget.reload();
+    reload();
+  }
+
+  reload() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    listSounds = [];
+
+    List<SoundModel> listAllSounds =
+        await SoundService(campaign: widget.campaign)
+            .getSoundsByTag(widget.tag);
+
+    for (SoundModel soundModel in listAllSounds) {
+      listSounds.add(soundModel);
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 }
