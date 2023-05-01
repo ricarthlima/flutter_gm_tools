@@ -69,6 +69,7 @@ class _RowSoundTagState extends State<RowSoundTag> {
   List<SoundModel> listSounds = [];
   bool isLoading = false;
   bool isLooping = false;
+  double volume = 100;
 
   SoundModel? activeSound;
 
@@ -130,8 +131,27 @@ class _RowSoundTagState extends State<RowSoundTag> {
                 ),
                 const Text("Loop?"),
                 const SizedBox(width: 16),
+                const Text("Volume:"),
+                const SizedBox(width: 8),
+                Slider(
+                  value: volume,
+                  onChanged: (value) {
+                    changeVolume(value);
+                  },
+                  onChangeEnd: (value) {
+                    updateVolume(volume);
+                  },
+                  min: 0,
+                  max: 100,
+                  divisions: 100,
+                  label: volume.toStringAsFixed(0),
+                ),
+                const SizedBox(width: 16),
                 const Text("Tocando agora:   "),
-                Text((activeSound != null) ? activeSound!.name : "------"),
+                Text(
+                  (activeSound != null) ? activeSound!.name : "------",
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
           ),
@@ -288,6 +308,19 @@ class _RowSoundTagState extends State<RowSoundTag> {
         .setLoop(tag: widget.tag, loop: loop);
   }
 
+  changeVolume(double value) async {
+    setState(() {
+      volume = value;
+    });
+  }
+
+  updateVolume(double value) async {
+    await SoundService(campaign: widget.campaign).setVolume(
+      tag: widget.tag,
+      volume: value,
+    );
+  }
+
   setupListeners() {
     SoundService(campaign: widget.campaign)
         .listenActiveSounds(widget.tag)
@@ -319,6 +352,13 @@ class _RowSoundTagState extends State<RowSoundTag> {
           if (loop != null) {
             setState(() {
               isLooping = loop;
+            });
+          }
+
+          double? volumeValue = map["volume"];
+          if (volumeValue != null) {
+            setState(() {
+              volume = volumeValue;
             });
           }
         }

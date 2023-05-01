@@ -114,6 +114,13 @@ class SoundService {
     return updateTag(tag: tag, map: map);
   }
 
+  Future<void> setVolume(
+      {required SoundTag tag, required double volume}) async {
+    Map<String, dynamic> map = await getMapByTag(tag);
+    map["volume"] = volume;
+    return updateTag(tag: tag, map: map);
+  }
+
   Future<Map<String, dynamic>> getMapByTag(SoundTag tag) async {
     Map<String, dynamic> map = {};
 
