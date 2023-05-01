@@ -2,6 +2,7 @@
 
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
@@ -21,14 +22,31 @@ class SoundScreen extends StatefulWidget {
 
 class _SoundScreenState extends State<SoundScreen> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        RowSoundTag(tag: SoundTag.music, campaign: widget.campaign),
-        RowSoundTag(tag: SoundTag.ambience, campaign: widget.campaign),
-        RowSoundTag(tag: SoundTag.effect, campaign: widget.campaign),
-        RowSoundTag(tag: SoundTag.others, campaign: widget.campaign),
+        RowSoundTag(
+          tag: SoundTag.music,
+          campaign: widget.campaign,
+        ),
+        RowSoundTag(
+          tag: SoundTag.ambience,
+          campaign: widget.campaign,
+        ),
+        RowSoundTag(
+          tag: SoundTag.effect,
+          campaign: widget.campaign,
+        ),
+        RowSoundTag(
+          tag: SoundTag.others,
+          campaign: widget.campaign,
+        ),
       ],
     );
   }
@@ -37,7 +55,11 @@ class _SoundScreenState extends State<SoundScreen> {
 class RowSoundTag extends StatefulWidget {
   final SoundTag tag;
   final Campaign campaign;
-  const RowSoundTag({super.key, required this.tag, required this.campaign});
+  const RowSoundTag({
+    super.key,
+    required this.tag,
+    required this.campaign,
+  });
 
   @override
   State<RowSoundTag> createState() => _RowSoundTagState();
@@ -46,10 +68,14 @@ class RowSoundTag extends StatefulWidget {
 class _RowSoundTagState extends State<RowSoundTag> {
   List<SoundModel> listSounds = [];
   bool isLoading = false;
+  bool isLooping = false;
+
+  SoundModel? activeSound;
 
   @override
   void initState() {
     reload();
+    setupListeners();
     super.initState();
   }
 
@@ -65,28 +91,50 @@ class _RowSoundTagState extends State<RowSoundTag> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                getSoundTagName(widget.tag),
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              FloatingActionButton(
-                elevation: 0,
-                onPressed: () {
-                  if (!isLoading) {
-                    addSound(context);
-                  }
-                },
-                child: const Icon(Icons.add),
-              ),
-            ],
+          Text(
+            getSoundTagName(widget.tag),
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    if (!isLoading) {
+                      addSound(context);
+                    }
+                  },
+                  child: const Text("Adicionar"),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(MyColors.darkRed),
+                  ),
+                  onPressed: () {
+                    stopSound();
+                  },
+                  child: const Text("Parar"),
+                ),
+                const SizedBox(width: 16),
+                Switch(
+                  value: isLooping,
+                  onChanged: (value) {
+                    toogleLoop(value);
+                  },
+                ),
+                const Text("Loop?"),
+                const SizedBox(width: 16),
+                const Text("Tocando agora:   "),
+                Text((activeSound != null) ? activeSound!.name : "------"),
+              ],
+            ),
+          ),
           SizedBox(
             height: 128,
             child: (isLoading)
@@ -105,7 +153,9 @@ class _RowSoundTagState extends State<RowSoundTag> {
                             child: Stack(
                               children: [
                                 InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    playSound(soundModel);
+                                  },
                                   child: Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
@@ -220,5 +270,59 @@ class _RowSoundTagState extends State<RowSoundTag> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  playSound(SoundModel soundModel) async {
+    SoundService(campaign: widget.campaign).playSound(soundModel);
+  }
+
+  stopSound() {
+    SoundService(campaign: widget.campaign).stopSound(widget.tag);
+  }
+
+  toogleLoop(bool loop) async {
+    setState(() {
+      isLooping = loop;
+    });
+    await SoundService(campaign: widget.campaign)
+        .setLoop(tag: widget.tag, loop: loop);
+  }
+
+  setupListeners() {
+    SoundService(campaign: widget.campaign)
+        .listenActiveSounds(widget.tag)
+        .listen(
+      (DocumentSnapshot<Map<String, dynamic>> snapshot) {
+        if (snapshot.data() != null) {
+          Map<String, dynamic> map = snapshot.data()!;
+          String? fullPath = map["fullPath"];
+
+          if (fullPath != null) {
+            SoundService(campaign: widget.campaign)
+                .getSoundModelByFullPath(fullPath)
+                .then(
+              (SoundModel soundModel) {
+                setState(
+                  () {
+                    activeSound = soundModel;
+                  },
+                );
+              },
+            );
+          } else {
+            setState(() {
+              activeSound = null;
+            });
+          }
+
+          bool? loop = map["loop"];
+          if (loop != null) {
+            setState(() {
+              isLooping = loop;
+            });
+          }
+        }
+      },
+    );
   }
 }

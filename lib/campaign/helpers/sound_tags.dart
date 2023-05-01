@@ -18,12 +18,12 @@ String getSoundTagName(SoundTag tag) {
   }
 }
 
-SoundTag soundTagFromString(String nameTage) {
+SoundTag? soundTagFromString(String nameTage) {
   for (SoundTag tag in SoundTag.values) {
     if (tag.name == nameTage) {
       return tag;
     }
   }
 
-  return SoundTag.others;
+  return null;
 }

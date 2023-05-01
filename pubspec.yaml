@@ -45,6 +45,7 @@ dependencies:
   uuid: ^3.0.7
   http: ^0.13.5
   file_picker: ^5.2.11
+  just_audio: ^0.9.32
 
 dev_dependencies:
   flutter_test:

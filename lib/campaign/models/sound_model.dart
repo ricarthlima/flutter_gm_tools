@@ -6,11 +6,13 @@ class SoundModel {
   FullMetadata metadata;
   SoundTag tag;
   Reference reference;
+  String url;
 
   SoundModel({
     required this.name,
     required this.metadata,
     required this.tag,
     required this.reference,
+    required this.url,
   });
 }
