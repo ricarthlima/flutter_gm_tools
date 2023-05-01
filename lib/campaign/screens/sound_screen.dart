@@ -4,9 +4,11 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
 import 'package:flutter_gm_tools/_core/show_snackbar.dart';
+import 'package:flutter_gm_tools/auth/services/auth_service.dart';
 import 'package:flutter_gm_tools/campaign/helpers/sound_tags.dart';
 import 'package:flutter_gm_tools/campaign/models/sound_model.dart';
 import 'package:flutter_gm_tools/campaign/services/sound_service.dart';
@@ -21,6 +23,8 @@ class SoundScreen extends StatefulWidget {
 }
 
 class _SoundScreenState extends State<SoundScreen> {
+  double myVolume = 100;
+
   @override
   void initState() {
     super.initState();
@@ -31,22 +35,60 @@ class _SoundScreenState extends State<SoundScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        RowSoundTag(
-          tag: SoundTag.music,
-          campaign: widget.campaign,
+        Container(
+          decoration: BoxDecoration(
+            color: MyColors.white,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(children: [
+            const Text(
+              "Volume geral:",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Slider(
+              value: myVolume,
+              onChanged: (value) {
+                setState(() {
+                  myVolume = value;
+                });
+              },
+              onChangeEnd: (value) {
+                AuthService().updateVolume(value);
+              },
+              divisions: 100,
+              min: 0,
+              max: 100,
+            ),
+            Text(myVolume.toStringAsFixed(0)),
+          ]),
         ),
-        RowSoundTag(
-          tag: SoundTag.ambience,
-          campaign: widget.campaign,
-        ),
-        RowSoundTag(
-          tag: SoundTag.effect,
-          campaign: widget.campaign,
-        ),
-        RowSoundTag(
-          tag: SoundTag.others,
-          campaign: widget.campaign,
-        ),
+        (widget.campaign.ownerId == FirebaseAuth.instance.currentUser!.uid)
+            ? Column(
+                children: [
+                  RowSoundTag(
+                    tag: SoundTag.music,
+                    campaign: widget.campaign,
+                  ),
+                  RowSoundTag(
+                    tag: SoundTag.ambience,
+                    campaign: widget.campaign,
+                  ),
+                  RowSoundTag(
+                    tag: SoundTag.effect,
+                    campaign: widget.campaign,
+                  ),
+                  RowSoundTag(
+                    tag: SoundTag.others,
+                    campaign: widget.campaign,
+                  ),
+                ],
+              )
+            : Container(),
       ],
     );
   }

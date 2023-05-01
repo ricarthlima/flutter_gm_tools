@@ -8,7 +8,7 @@ import 'package:flutter_gm_tools/models/campaign.dart';
 import '../roteador_telas.dart';
 
 class RoteadorTesteWidgets extends StatelessWidget {
-  final ScreensEnum screen = ScreensEnum.gmview;
+  final ScreensEnum screen = ScreensEnum.roteador;
   RoteadorTesteWidgets({super.key});
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;

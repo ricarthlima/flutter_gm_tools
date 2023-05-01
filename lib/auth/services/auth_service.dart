@@ -139,4 +139,18 @@ class AuthService {
       return e.message;
     }
   }
+
+  Future<void> updateVolume(double volume) async {
+    return await _firebaseFirestore
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({"volume": volume});
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getVolume() {
+    return _firebaseFirestore
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .snapshots();
+  }
 }
