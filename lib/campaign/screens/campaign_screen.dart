@@ -69,6 +69,15 @@ class _CampaignScreenState extends State<CampaignScreen> {
   }
 
   @override
+  void dispose() {
+    mapPlayers.forEach((key, value) {
+      value.audioPlayer.stop();
+      value.audioPlayer.dispose();
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.darkfgreen,
