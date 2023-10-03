@@ -153,4 +153,8 @@ class AuthService {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .snapshots();
   }
+
+  Future<String> getUrlImagemPerfil(String id) {
+    return _firebaseStorage.ref("avatars/$id.png").getDownloadURL();
+  }
 }

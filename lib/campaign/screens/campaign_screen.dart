@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
 import 'package:flutter_gm_tools/_core/enum_tabs.dart';
@@ -29,12 +30,14 @@ class CampaignScreen extends StatefulWidget {
 class _CampaignScreenState extends State<CampaignScreen> {
   // Dados locais
   late Campaign campaign;
+  List<String> listUrlProfilePhotoActiveUsers = [];
 
   // Serviços
   final CampaignService _campaignService = CampaignService();
 
   // Snapshots
   StreamSubscription? campaignSubscription;
+  StreamSubscription? campaignRealtimeSubscription;
 
   TabsEnum currentTab = TabsEnum.images;
 
@@ -82,18 +85,17 @@ class _CampaignScreenState extends State<CampaignScreen> {
     });
 
     setupAudioListeners();
-    setupCampaignStream();
+    initiateStreams();
+    setMeActiveUser();
 
     super.initState();
   }
 
   @override
-  void dispose() {
-    mapPlayers.forEach((key, value) {
-      value.audioPlayer.stop();
-      value.audioPlayer.dispose();
-    });
-    closeAllStreams();
+  void dispose() async {
+    await stopSounds();
+    await closeAllStreams();
+    await removeMeActiveUser();
     super.dispose();
   }
 
@@ -120,6 +122,7 @@ class _CampaignScreenState extends State<CampaignScreen> {
             clickSound: () {
               clickTab(TabsEnum.sounds);
             },
+            listActiveUsers: listUrlProfilePhotoActiveUsers,
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -242,7 +245,7 @@ class _CampaignScreenState extends State<CampaignScreen> {
     }
   }
 
-  void setupCampaignStream() {
+  void initiateStreams() {
     campaignSubscription =
         _campaignService.getCampaignStream(campaign.id).listen(
       (QuerySnapshot<Map<String, dynamic>> snapshot) {
@@ -252,9 +255,62 @@ class _CampaignScreenState extends State<CampaignScreen> {
         });
       },
     );
+
+    campaignRealtimeSubscription = _campaignService
+        .getCampaignRealtimeDataStream(campaign.id)
+        .listen((QuerySnapshot<Map<String, dynamic>> snapshot) {
+      // Atualizar galera online
+      for (QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
+        if (doc.id == "active_users") {
+          listUrlProfilePhotoActiveUsers = [];
+          for (String userId in doc.data().keys) {
+            // if (DateTime.parse(doc.data()[userId].toString())
+            //     .isAfter(DateTime.now())) {
+            //   listUrlProfilePhotoActiveUsers.add(userId);
+            // } // Gambiarra da queda, porem pooling
+            listUrlProfilePhotoActiveUsers.add(userId);
+          }
+          setState(() {});
+        }
+      }
+    });
   }
 
-  void closeAllStreams() {
-    (campaignSubscription != null) ? campaignSubscription!.cancel() : null;
+  void setMeActiveUser() {
+    _campaignService.updateRealtimeValue(
+      campaign: campaign,
+      doc: "active_users",
+      map: {
+        FirebaseAuth.instance.currentUser!.uid:
+            //DateTime.now().add(const Duration(minutes: 2)).toString(), // Gambiarra da queda, porem pooling
+            DateTime.now().toString(),
+      },
+    );
+  }
+
+  // Dispose Methods
+
+  Future<void> stopSounds() async {
+    for (var key in mapPlayers.keys) {
+      await mapPlayers[key]!.audioPlayer.stop();
+      await mapPlayers[key]!.audioPlayer.dispose();
+    }
+  }
+
+  Future<void> closeAllStreams() async {
+    (campaignSubscription != null)
+        ? await campaignSubscription!.cancel()
+        : null;
+    (campaignRealtimeSubscription != null)
+        ? await campaignSubscription!.cancel()
+        : null;
+  }
+
+  Future<void> removeMeActiveUser() async {
+    await _campaignService.removeRealtimeValue(
+      campaign: campaign,
+      doc: "active_users",
+      field: FirebaseAuth.instance.currentUser!.uid,
+    );
   }
 }

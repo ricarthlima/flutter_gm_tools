@@ -101,10 +101,71 @@ class CampaignService {
         .snapshots();
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> getCampaignRealtimeDataStream(
+      String campaignId) {
+    return _firebaseFirestore
+        .collection("campaigns")
+        .doc(campaignId)
+        .collection("realtime")
+        .snapshots();
+  }
+
   Future<void> updateCampaign(Campaign campaign) async {
     return _firebaseFirestore
         .collection("campaigns")
         .doc(campaign.id)
         .set(campaign.toMap());
+  }
+
+  Future<void> updateRealtimeValue({
+    required Campaign campaign,
+    required String doc,
+    required Map<String, dynamic> map,
+  }) async {
+    final docsnap = await _firebaseFirestore
+        .collection("campaigns")
+        .doc(campaign.id)
+        .collection("realtime")
+        .doc(doc)
+        .get();
+
+    Map<String, dynamic> mapsnap =
+        (docsnap.data() != null) ? docsnap.data()! : {};
+
+    for (String key in map.keys) {
+      mapsnap[key] = map[key];
+    }
+
+    return _firebaseFirestore
+        .collection("campaigns")
+        .doc(campaign.id)
+        .collection("realtime")
+        .doc(doc)
+        .set(mapsnap);
+  }
+
+  Future<void> removeRealtimeValue({
+    required Campaign campaign,
+    required String doc,
+    required String field,
+  }) async {
+    final docsnap = await _firebaseFirestore
+        .collection("campaigns")
+        .doc(campaign.id)
+        .collection("realtime")
+        .doc(doc)
+        .get();
+
+    Map<String, dynamic> mapsnap =
+        (docsnap.data() != null) ? docsnap.data()! : {};
+
+    mapsnap.remove(field);
+
+    return _firebaseFirestore
+        .collection("campaigns")
+        .doc(campaign.id)
+        .collection("realtime")
+        .doc(doc)
+        .set(mapsnap);
   }
 }

@@ -2,6 +2,8 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_gm_tools/_core/check_owner_image.dart";
 import 'package:flutter_gm_tools/_core/models/campaign.dart';
+import "package:flutter_gm_tools/auth/services/auth_service.dart";
+import "package:flutter_gm_tools/home/widgets/create_campaign_dialog.dart";
 import "package:google_fonts/google_fonts.dart";
 
 import '../../_core/colors.dart';
@@ -14,6 +16,7 @@ class CampaignViewHeader extends StatefulWidget {
   final Function clickImages;
   final Function clickMaps;
   final Function clickSettings;
+  final List<String> listActiveUsers;
   const CampaignViewHeader({
     super.key,
     required this.campaign,
@@ -22,6 +25,7 @@ class CampaignViewHeader extends StatefulWidget {
     required this.clickImages,
     required this.clickMaps,
     required this.clickSettings,
+    required this.listActiveUsers,
   });
 
   @override
@@ -161,6 +165,43 @@ class _CampaignViewHeaderState extends State<CampaignViewHeader> {
                 ),
               ),
               const CampaignExitButton(),
+              Positioned(
+                bottom: 10,
+                left: 10,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children:
+                      List.generate(widget.listActiveUsers.length, (index) {
+                    return FutureBuilder<String>(
+                      future: AuthService()
+                          .getUrlImagemPerfil(widget.listActiveUsers[index]),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.none:
+                          case ConnectionState.waiting:
+                          case ConnectionState.active:
+                            return const Center(
+                              child: CircularProgressIndicatorElevatedButton(),
+                            );
+                          case ConnectionState.done:
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(32),
+                                child: Image.network(
+                                  snapshot.data!,
+                                  width: 32,
+                                  height: 32,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                        }
+                      },
+                    );
+                  }),
+                ),
+              ),
             ],
           ),
         ),
