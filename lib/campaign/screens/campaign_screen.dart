@@ -1,13 +1,17 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
 import 'package:flutter_gm_tools/_core/enum_tabs.dart';
+import 'package:flutter_gm_tools/_core/services/campaing_service.dart';
 import 'package:flutter_gm_tools/auth/services/auth_service.dart';
 import 'package:flutter_gm_tools/campaign/components/campaign_view_header.dart';
 import 'package:flutter_gm_tools/campaign/helpers/sound_tags.dart';
 import 'package:flutter_gm_tools/campaign/models/played_sound_model.dart';
+import 'package:flutter_gm_tools/campaign/screens/settings_screen.dart';
 import 'package:flutter_gm_tools/campaign/screens/sound_screen.dart';
-import 'package:flutter_gm_tools/models/campaign.dart';
+import 'package:flutter_gm_tools/_core/models/campaign.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../models/sound_model.dart';
@@ -22,6 +26,15 @@ class CampaignScreen extends StatefulWidget {
 }
 
 class _CampaignScreenState extends State<CampaignScreen> {
+  // Dados locais
+  late Campaign campaign;
+
+  // Serviços
+  final CampaignService _campaignService = CampaignService();
+
+  // Snapshots
+  StreamSubscription? campaignSubscription;
+
   TabsEnum currentTab = TabsEnum.sounds;
 
   late Map<TabsEnum, Widget> innerScreens;
@@ -57,13 +70,17 @@ class _CampaignScreenState extends State<CampaignScreen> {
 
   @override
   void initState() {
+    campaign = widget.campaign;
+
     setState(() {
       innerScreens = {
-        TabsEnum.sounds: SoundScreen(campaign: widget.campaign),
+        TabsEnum.sounds: SoundScreen(campaign: campaign),
+        TabsEnum.settings: SettingsScreen(campaign: campaign),
       };
     });
 
     setupAudioListeners();
+    setupCampaignStream();
 
     super.initState();
   }
@@ -74,6 +91,7 @@ class _CampaignScreenState extends State<CampaignScreen> {
       value.audioPlayer.stop();
       value.audioPlayer.dispose();
     });
+    closeAllStreams();
     super.dispose();
   }
 
@@ -84,7 +102,7 @@ class _CampaignScreenState extends State<CampaignScreen> {
       body: Column(
         children: [
           CampaignViewHeader(
-            campaign: widget.campaign,
+            campaign: campaign,
             clickImages: () {
               clickTab(TabsEnum.images);
             },
@@ -143,7 +161,7 @@ class _CampaignScreenState extends State<CampaignScreen> {
 
     // Reprodutores
     for (SoundTag tag in SoundTag.values) {
-      SoundService(campaign: widget.campaign).listenActiveSounds(tag).listen(
+      SoundService(campaign: campaign).listenActiveSounds(tag).listen(
         (DocumentSnapshot<Map<String, dynamic>> snapshot) async {
           if (snapshot.data() != null) {
             Map<String, dynamic> map = snapshot.data()!;
@@ -173,9 +191,8 @@ class _CampaignScreenState extends State<CampaignScreen> {
             String? fullPath = map["fullPath"];
 
             if (fullPath != null) {
-              SoundModel soundModel =
-                  await SoundService(campaign: widget.campaign)
-                      .getSoundModelByFullPath(fullPath);
+              SoundModel soundModel = await SoundService(campaign: campaign)
+                  .getSoundModelByFullPath(fullPath);
               activeSound = soundModel;
             } else {
               activeSound = null;
@@ -221,5 +238,21 @@ class _CampaignScreenState extends State<CampaignScreen> {
         await mapPlayers[tag]!.audioPlayer.stop();
       }
     }
+  }
+
+  void setupCampaignStream() {
+    campaignSubscription =
+        _campaignService.getCampaignStream(campaign.id).listen(
+      (QuerySnapshot<Map<String, dynamic>> snapshot) {
+        Campaign updateCampaign = Campaign.fromMap(snapshot.docs[0].data());
+        setState(() {
+          campaign = updateCampaign;
+        });
+      },
+    );
+  }
+
+  void closeAllStreams() {
+    (campaignSubscription != null) ? campaignSubscription!.cancel() : null;
   }
 }

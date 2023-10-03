@@ -12,7 +12,7 @@ import 'package:flutter_gm_tools/auth/services/auth_service.dart';
 import 'package:flutter_gm_tools/campaign/helpers/sound_tags.dart';
 import 'package:flutter_gm_tools/campaign/models/sound_model.dart';
 import 'package:flutter_gm_tools/campaign/services/sound_service.dart';
-import 'package:flutter_gm_tools/models/campaign.dart';
+import 'package:flutter_gm_tools/_core/models/campaign.dart';
 
 class SoundScreen extends StatefulWidget {
   final Campaign campaign;

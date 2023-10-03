@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_gm_tools/campaign/helpers/sound_tags.dart';
 import 'package:flutter_gm_tools/campaign/models/sound_model.dart';
-import 'package:flutter_gm_tools/models/campaign.dart';
+import 'package:flutter_gm_tools/_core/models/campaign.dart';
 
 class SoundService {
   final Campaign campaign;

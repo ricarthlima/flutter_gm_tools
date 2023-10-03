@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_gm_tools/_core/check_owner_image.dart";
-import "package:flutter_gm_tools/models/campaign.dart";
+import 'package:flutter_gm_tools/_core/models/campaign.dart';
 import "package:google_fonts/google_fonts.dart";
 
 import '../../_core/colors.dart';

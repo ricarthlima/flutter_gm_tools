@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
 import 'package:flutter_gm_tools/campaign/screens/campaign_screen.dart';
-import 'package:flutter_gm_tools/models/campaign.dart';
-import 'package:flutter_gm_tools/models/public_user.dart';
+import 'package:flutter_gm_tools/_core/models/campaign.dart';
+import 'package:flutter_gm_tools/_core/models/public_user.dart';
 
 class CampaignWrapWidget extends StatefulWidget {
   final Campaign campaign;

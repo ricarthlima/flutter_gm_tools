@@ -4,7 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gm_tools/_dev_only/screens_enum.dart';
 import 'package:flutter_gm_tools/campaign/screens/campaign_screen.dart';
-import 'package:flutter_gm_tools/models/campaign.dart';
+import 'package:flutter_gm_tools/_core/models/campaign.dart';
 import '../roteador_telas.dart';
 
 class RoteadorTesteWidgets extends StatelessWidget {

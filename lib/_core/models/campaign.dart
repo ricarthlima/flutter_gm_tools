@@ -13,6 +13,8 @@ class Campaign {
   DateTime createdAt;
   DateTime updatedAt;
 
+  String? system;
+
   Campaign({
     required this.id,
     required this.ownerId,
@@ -37,7 +39,8 @@ class Campaign {
         name = map["name"],
         description = map["description"],
         createdAt = DateTime.parse(map["createdAt"]),
-        updatedAt = DateTime.parse(map["updatedAt"]);
+        updatedAt = DateTime.parse(map["updatedAt"]),
+        system = map["system"];
 
   Map<String, dynamic> toMap() {
     return {
@@ -51,6 +54,7 @@ class Campaign {
       "description": description,
       "createdAt": createdAt.toString(),
       "updatedAt": updatedAt.toString(),
+      "system": system,
     };
   }
 }

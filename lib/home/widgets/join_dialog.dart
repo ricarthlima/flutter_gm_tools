@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../services/campaing_service.dart';
+import '../../_core/services/campaing_service.dart';
 
 showJoinDialog({required BuildContext context}) {
   showDialog(

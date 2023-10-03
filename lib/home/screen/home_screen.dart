@@ -4,12 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gm_tools/_core/colors.dart';
 import 'package:flutter_gm_tools/auth/services/auth_service.dart';
-import 'package:flutter_gm_tools/home/services/campaing_service.dart';
+import 'package:flutter_gm_tools/_core/services/campaing_service.dart';
 import 'package:flutter_gm_tools/home/widgets/campaign_wrap_widget.dart';
 import 'package:flutter_gm_tools/home/widgets/create_campaign_dialog.dart';
 import 'package:flutter_gm_tools/home/widgets/join_dialog.dart';
 import 'package:flutter_gm_tools/home/widgets/user_infos_drawer_header.dart';
-import 'package:flutter_gm_tools/models/campaign.dart';
+import 'package:flutter_gm_tools/_core/models/campaign.dart';
 
 class HomeScreen extends StatelessWidget {
   final User user;
@@ -93,8 +93,8 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    children: const [
+                  const Row(
+                    children: [
                       Expanded(
                         child: Text(
                           '"Para qual maravilhoso mundo embarcaremos hoje?"',

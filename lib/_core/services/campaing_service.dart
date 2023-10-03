@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_gm_tools/models/campaign.dart';
+import 'package:flutter_gm_tools/_core/models/campaign.dart';
 import 'package:uuid/uuid.dart';
 
 class CampaignService {
@@ -91,5 +91,20 @@ class CampaignService {
     }
 
     return null;
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getCampaignStream(
+      String campaignId) {
+    return _firebaseFirestore
+        .collection("campaigns")
+        .where("id", isEqualTo: campaignId)
+        .snapshots();
+  }
+
+  updateCampaign(Campaign campaign) {
+    _firebaseFirestore
+        .collection("campaigns")
+        .doc(campaign.id)
+        .set(campaign.toMap());
   }
 }
