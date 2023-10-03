@@ -101,8 +101,8 @@ class CampaignService {
         .snapshots();
   }
 
-  updateCampaign(Campaign campaign) {
-    _firebaseFirestore
+  Future<void> updateCampaign(Campaign campaign) async {
+    return _firebaseFirestore
         .collection("campaigns")
         .doc(campaign.id)
         .set(campaign.toMap());

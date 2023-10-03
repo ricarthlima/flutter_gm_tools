@@ -35,7 +35,7 @@ class _CampaignScreenState extends State<CampaignScreen> {
   // Snapshots
   StreamSubscription? campaignSubscription;
 
-  TabsEnum currentTab = TabsEnum.sounds;
+  TabsEnum currentTab = TabsEnum.images;
 
   late Map<TabsEnum, Widget> innerScreens;
 

@@ -182,9 +182,16 @@ class _CampaignViewHeaderState extends State<CampaignViewHeader> {
                   children: [
                     IconButton(
                       onPressed: () {
-                        widget.clickSound();
+                        widget.clickImages();
                       },
-                      icon: const Icon(Icons.audiotrack_rounded),
+                      icon: const Icon(Icons.image),
+                    ),
+                    const SizedBox(width: 16),
+                    IconButton(
+                      onPressed: () {
+                        widget.clickMaps();
+                      },
+                      icon: const Icon(Icons.map),
                     ),
                     const SizedBox(width: 16),
                     IconButton(
@@ -196,16 +203,9 @@ class _CampaignViewHeaderState extends State<CampaignViewHeader> {
                     const SizedBox(width: 16),
                     IconButton(
                       onPressed: () {
-                        widget.clickImages();
+                        widget.clickSound();
                       },
-                      icon: const Icon(Icons.image),
-                    ),
-                    const SizedBox(width: 16),
-                    IconButton(
-                      onPressed: () {
-                        widget.clickMaps();
-                      },
-                      icon: const Icon(Icons.map),
+                      icon: const Icon(Icons.audiotrack_rounded),
                     ),
                     const SizedBox(width: 16),
                     IconButton(

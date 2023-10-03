@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gm_tools/_core/services/campaing_service.dart';
 import 'package:flutter_gm_tools/_core/systems_enum.dart';
 
 import '../../_core/models/campaign.dart';
+import '../../_core/show_snackbar.dart';
 
 class SettingsScreen extends StatefulWidget {
   final Campaign campaign;
@@ -46,12 +48,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 value: _systemRPG,
-                onChanged: (value) {
-                  setState(() {
-                    _systemRPG = value;
-                  });
-                  updateSystem();
-                },
+                onChanged: (widget.campaign.ownerId ==
+                        FirebaseAuth.instance.currentUser!.uid)
+                    ? (String? value) {
+                        setState(() {
+                          _systemRPG = value;
+                        });
+                        updateSystem();
+                      }
+                    : null,
               ),
             ],
           ),
@@ -62,6 +67,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   updateSystem() {
     widget.campaign.system = _systemRPG;
-    CampaignService().updateCampaign(widget.campaign);
+    CampaignService().updateCampaign(widget.campaign).then((value) {
+      showSnackBar(
+        context: context,
+        mensagem: "Sistema atualizado!",
+        isErro: false,
+      );
+    });
   }
 }
