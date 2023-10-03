@@ -149,7 +149,7 @@ class CircularProgressIndicatorElevatedButton extends StatelessWidget {
       height: 16,
       width: 16,
       child: CircularProgressIndicator(
-        backgroundColor: Colors.white,
+        color: Colors.white,
       ),
     );
   }

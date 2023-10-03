@@ -9,6 +9,7 @@ import 'package:flutter_gm_tools/auth/services/auth_service.dart';
 import 'package:flutter_gm_tools/campaign/components/campaign_view_header.dart';
 import 'package:flutter_gm_tools/campaign/helpers/sound_tags.dart';
 import 'package:flutter_gm_tools/campaign/models/played_sound_model.dart';
+import 'package:flutter_gm_tools/campaign/screens/image_screen.dart';
 import 'package:flutter_gm_tools/campaign/screens/settings_screen.dart';
 import 'package:flutter_gm_tools/campaign/screens/sound_screen.dart';
 import 'package:flutter_gm_tools/_core/models/campaign.dart';
@@ -74,6 +75,7 @@ class _CampaignScreenState extends State<CampaignScreen> {
 
     setState(() {
       innerScreens = {
+        TabsEnum.images: ImageScreen(campaign: campaign),
         TabsEnum.sounds: SoundScreen(campaign: campaign),
         TabsEnum.settings: SettingsScreen(campaign: campaign),
       };
