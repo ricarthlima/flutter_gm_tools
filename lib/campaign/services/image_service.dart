@@ -11,6 +11,7 @@ class ImageService {
   ImageService({required this.campaign});
 
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+  // ignore: unused_field
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   String _getBaseRef() {

@@ -25,6 +25,7 @@ class _ImageScreenState extends State<ImageScreen> {
   List<ImageModel> _listBackgrounds = [];
 
   bool isLoadingCharacters = false;
+  // ignore: unused_field
   final List<ImageModel> _listCharacters = [];
 
   @override
